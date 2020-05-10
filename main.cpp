@@ -3,16 +3,17 @@
 #include <stdlib.h>
 #include <iostream>
 #include "car.cpp"
-#include "RgbImage.cpp"
-#include "RgbImage.h"
+#include "house.cpp"
+#include "external_files/RgbImage.cpp"
+#include "external_files/RgbImage.h"
 using namespace std;
 
 static float angle = 0.0, ratio;
-static float x = 0.0f, y = 3.00f, z = 100.0f;
-static float lx = 0.10f, ly = 0.10f, lz = -1.0f;
-float theta = 0.01, fxincr = 0.1, fzincr = 0, temp, theta1, fx = 30, fz = 10;
-static GLint carr_display_list;
-int xxxx = 0, yyyy = 0, movecarvar = 0;
+static float x = 0.0f, y = 3.00f, z = 190.0f;
+static float lx = 0.0f, ly = 0.03f, lz = -1.0f;
+float theta = 0.01, fxincr = 0.1, fzincr = 0, temp, theta1, fx = -13, fz = 150;
+static GLint car_display_list, house_display_list, tree_display_list;
+int xxxx = 0, yyyy = 0, housevisible = 1, movecarvar = 0;
 int instruct = 1, movei = 0, showi = 1;
 
 // For colour of cars
@@ -20,7 +21,7 @@ int a[3] = {55, 97, 44};
 int b[3] = {102, 194, 127};
 int c[3] = {159, 243, 133};
 
-GLuint tree, floortexture, roadtexture;
+GLuint floortexture, roadtexture, cloud;
 
 void changeSize(int w, int h)
 {
@@ -59,21 +60,76 @@ GLuint loadTextureFromFile(const char *filename)
 void textures()
 {
 
-	// tree = loadTextureFromFile("tree.bmp");
-	roadtexture = loadTextureFromFile("road.bmp");
-	floortexture = loadTextureFromFile("greengrass.bmp");
+	cloud = loadTextureFromFile("textures/bg3.bmp");
+	roadtexture = loadTextureFromFile("textures/road.bmp");
+	floortexture = loadTextureFromFile("textures/greengrass.bmp");
+}
+
+//Background Vertices
+float bVert[12][3] = {
+	{-200.0, 0.0, +200.0},
+	{-200.0, 0.0, -200.0},
+	{-200.0, 180.0, -200.0},
+	{-200.0, 180.0, +200.0},
+	{+200.0, 0.0, -200.0},
+	{+200.0, 0.0, +200.0},
+	{+200.0, 180.0, +200.0},
+	{+200.0, 180.0, -200.0},
+	{-200.0, 0.0, -200.0},
+	{+200.0, 0.0, -200.0},
+	{+200.0, 180.0, -200.0},
+	{-200.0, 180.0, -200.0}};
+
+void drawClouds()
+{
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, cloud);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3fv(bVert[0]);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3fv(bVert[1]);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3fv(bVert[2]);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3fv(bVert[3]);
+	glEnd();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3fv(bVert[4]);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3fv(bVert[5]);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3fv(bVert[6]);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3fv(bVert[7]);
+	glEnd();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3fv(bVert[8]);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3fv(bVert[9]);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3fv(bVert[10]);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3fv(bVert[11]);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 //Floor Vertices
 float fVert[8][3] = {
-	{-100.0, 0.0, -100.0},
-	{+100.0, 0.0, -100.0},
-	{+100.0, 0.0, -20.0},
-	{-100.0, 0.0, -20.0},
-	{-100.0, 0.0, +20.0},
-	{+100.0, 0.0, +20.0},
-	{+100.0, 0.0, +100.0},
-	{-100.0, 0.0, +100.0}};
+
+	{-200.0, 0.0, -200.0},
+	{-200.0, 0.0, +200.0},
+	{-10.0, 0.0, +200.0},
+	{-10.0, 0.0, -200.0},
+	{+10.0, 0.0, -200.0},
+	{+10.0, 0.0, +200.0},
+	{+200.0, 0.0, +200.0},
+	{+200.0, 0.0, -200.0}};
 
 void drawFloor()
 {
@@ -107,10 +163,10 @@ void drawFloor()
 
 //Road Vertices
 float rVert[4][3] = {
-	{-100.0, 0.0, -20.0},
-	{+100.0, 0.0, -20.0},
-	{+100.0, 0.0, 20.0},
-	{-100.0, 0.0, 20.0}};
+	{-10.0, 0.0, -200.0},
+	{-10.0, 0.0, +200.0},
+	{+10.0, 0.0, +200.0},
+	{10.0, 0.0, -200.0}};
 
 void drawRoad()
 {
@@ -132,32 +188,6 @@ void drawRoad()
 	glDisable(GL_TEXTURE_2D);
 }
 
-// //Tree Vertices
-// float tVert[4][3] = {
-// 	{-80.0, 0.0, -20.0},
-// 	{-85.0, 0.0, -20.0},
-// 	{-85.0, 10.0, -20.0},
-// 	{-80.0, 10.0, -20.0}};
-
-// void drawTree()
-// {
-
-// 	glEnable(GL_TEXTURE_2D);
-// 	glBindTexture(GL_TEXTURE_2D, tree);
-
-// 	glBegin(GL_QUADS);
-// 	glTexCoord2f(0.0f, 0.0f);
-// 	glVertex3fv(tVert[0]);
-// 	glTexCoord2f(1.0f, 0.0f);
-// 	glVertex3fv(tVert[1]);
-// 	glTexCoord2f(1.0f, 1.0f);
-// 	glVertex3fv(tVert[2]);
-// 	glTexCoord2f(0.0f, 1.0f);
-// 	glVertex3fv(tVert[3]);
-// 	glEnd();
-
-// 	glDisable(GL_TEXTURE_2D);
-// }
 
 void PrintString(string s, int x, int y, int r, int g, int b)
 {
@@ -201,10 +231,12 @@ GLuint createDL2() //******************
 	return (houseDL);
 }
 
+
 void initScene()
 {
 	glEnable(GL_DEPTH_TEST);
-	carr_display_list = createDL();
+	car_display_list = createDL();
+	house_display_list = createDL2();
 }
 
 void renderStrings()
@@ -239,50 +271,69 @@ void renderScene(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(.7, 0.85, 1.0, 1.0);
 	glPushMatrix();
-	glColor4f(0.3, 0.3, 0.3, 1.0);
-	drawFloor();
+	glColor4f(0.8, 0.8, 0.8, 1.0);
+	drawClouds();
 	glPopMatrix();
 	glPushMatrix();
+	glColor4f(0.2, 0.35, 0.5, 1.0);
+	drawFloor();
+	// glColor4f(1.0, 1.0, 1.0, 1.0);
+	drawClouds();
+	glPopMatrix();
+	glPushMatrix();
+	glColor4f(0.3, 0.3, 0.3, 1.0);
 	drawRoad();
 	glPopMatrix();
 	glPushMatrix();
 	glColor4f(0.3, 0.3, 0.3, 1.0);
-	drawTree();
 	glPopMatrix();
 	renderStrings();
-	// glColor3f(0.0f, 0.0f, 0.0f); // Draw ground
-	// glBegin(GL_QUADS);
-	// glVertex3f(-100.0f, 0.0f, -100.0f);
-	// glVertex3f(-100.0f, 0.0f, 100.0f);
-	// glVertex3f(100.0f, 0.0f, 100.0f);
-	// glVertex3f(100.0f, 0.0f, -100.0f);
-	// glVertex3f(-100.0f, 0.0f, -20.0f);
-	// glVertex3f(-100.0f, 0.0f, 20.0f);
-	// glVertex3f(100.0f, 0.0f, 20.0f);
-	// glVertex3f(100.0f, 0.0f, -20.0f);
-	// glEnd();
-
-	for (i = -1; i <= 1; i++)
+	if (housevisible)
 	{
-		for (j = -1; j <= 1; j = j + 2)
+		glPushMatrix();
+		glScalef(2.0, 2.0, 2.0);
+		glTranslatef(-8.0, 1.0, 70.0);
+		glRotatef(90, 0, 1, 0);
+		glCallList(house_display_list);
+
+		glPopMatrix();
+	}
+
+
+	for (i = -1; i <= 1; i = i + 2)
+	{
+		for (j = -1; j <= 1; j++)
 		{
 			glPushMatrix();
-			glTranslatef((2 * i) * 10.0, 0, (j)*10.0);
-			if (j == -1)
+			glTranslatef((i)*5.0, 0, (3 * j) * 10.0);
+			if (i == -1)
 			{
-				glRotatef(180, 0, 1, 0);
+				glRotatef(90, 0, 1, 0);
+			}
+			else
+			{
+				glRotatef(-90, 0, 1, 0);
 			}
 			glColor3ub(a[i + 1], b[j + 1], c[i + 1]);
-			glCallList(carr_display_list);
+			glCallList(car_display_list);
 			glPopMatrix();
 		}
 	}
 	if (fxincr != 0)
+	{
 		theta1 = (atan(fzincr / fxincr) * 180) / 3.141;
+	}
+
 	else if (fzincr > 0)
+	{
 		theta1 = -90.0;
+	}
+
 	else
+	{
 		theta1 = 90.0;
+	}
+
 	if (fxincr > 0 && fzincr < 0)
 	{
 		theta1 = -theta1;
@@ -299,11 +350,12 @@ void renderScene(void)
 	{
 		theta1 = -theta1;
 	}
+
 	glPushMatrix();
 	glTranslatef(fx, 0, fz);
 	glRotatef(theta1, 0, 1, 0);
-	glColor3f(0.8, 0.8, 0);
-	glCallList(carr_display_list);
+	glColor3f(0.8, 0.7, 0.1);
+	glCallList(car_display_list);
 	glPopMatrix();
 	glutSwapBuffers();
 }
