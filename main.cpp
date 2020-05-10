@@ -4,7 +4,7 @@
 #include <iostream>
 #include "car.cpp"
 #include "house.cpp"
-// #include "tree.cpp"
+#include "tree.cpp"
 #include "texture.cpp"
 using namespace std;
 
@@ -37,7 +37,6 @@ void changeSize(int w, int h)
 
 void PrintString(string s, int x, int y, int r, int g, int b)
 {
-	// void *font = GLUT_BITMAP_8_BY_13;
 	int next_line = 0;
 	glRasterPos2i(x, y);
 	int len = s.length();
@@ -77,33 +76,33 @@ GLuint createDL2() //******************
 	return (houseDL);
 }
 
-// GLuint createDL3() //******************
-// {
-// 	GLuint treeDL;
-// 	treeDL = glGenLists(1);		   // Create the id for the list
-// 	glNewList(treeDL, GL_COMPILE); // start list
-// 	makeTree(4, 0.5);			   // call the function that contains the rendering commands
-// 	glEndList();				   // endList
-// 	return (treeDL);
-// }
+GLuint createDL3() //******************
+{
+	GLuint treeDL;
+	treeDL = glGenLists(1);		   // Create the id for the list
+	glNewList(treeDL, GL_COMPILE); // start list
+	makeTree(4, 0.5);			   // call the function that contains the rendering commands
+	glEndList();				   // endList
+	return (treeDL);
+}
 
-// GLuint createDL4() //******************
-// {
-// 	GLuint treeDL;
-// 	treeDL = glGenLists(1);		   // Create the id for the list
-// 	glNewList(treeDL, GL_COMPILE); // start list
-// 	makeTree1(4, 0.5);			   // call the function that contains the rendering commands
-// 	glEndList();				   // endList
-// 	return (treeDL);
-// }
+GLuint createDL4() //******************
+{
+	GLuint treeDL;
+	treeDL = glGenLists(1);		   // Create the id for the list
+	glNewList(treeDL, GL_COMPILE); // start list
+	makeTree1(4, 0.5);			   // call the function that contains the rendering commands
+	glEndList();				   // endList
+	return (treeDL);
+}
 
 void initScene()
 {
 	glEnable(GL_DEPTH_TEST);
 	car_display_list = createDL();
 	house_display_list = createDL2();
-	// tree_display_list = createDL3();
-	// tree1_display_list = createDL4();
+	tree_display_list = createDL3();
+	tree1_display_list = createDL4();
 }
 
 void renderStrings()
@@ -146,7 +145,6 @@ void renderScene(void)
 	glPushMatrix();
 	glColor4f(0.2, 0.35, 0.5, 1.0);
 	drawFloor();
-	// drawClouds();
 	glPopMatrix();
 	glPushMatrix();
 	glColor4f(0.3, 0.3, 0.3, 1.0);
@@ -167,95 +165,90 @@ void renderScene(void)
 
 		glPopMatrix();
 	}
-	// if (treevisible)
-	// {
-	// 	glPushMatrix();
-	// 	glTranslatef(-10.0, 0.0, 80.0);
-	// 	glRotatef(170, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-11.0, 0.0, 100.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-14.0, 0.0, 90.0);
-	// 	glRotatef(190, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-12.0, 0.0, -50.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-14.0, 0.0, -60.0);
-	// 	glRotatef(195, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-12.0, 0.0, -20.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-14.0, 0.0, -10.0);
-	// 	glRotatef(175, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
+	if (treevisible)
+	{
+		glPushMatrix();
+		glTranslatef(-10.0, 0.0, 80.0);
+		glRotatef(170, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-11.0, 0.0, 100.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-14.0, 0.0, 90.0);
+		glRotatef(190, 0, 1, 0);
+		glCallList(tree1_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-12.0, 0.0, -50.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree1_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-14.0, 0.0, -60.0);
+		glRotatef(195, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-12.0, 0.0, -20.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree1_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-14.0, 0.0, -10.0);
+		glRotatef(175, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
 
-	// 	glPushMatrix();
-	// 	glTranslatef(11.0, 0.0, -10.0);
-	// 	glRotatef(200, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(15.0, 0.0, 0.0);
-	// 	glRotatef(190, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(12.0, 0.0, 10.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(14.0, 0.0, 20.0);
-	// 	glRotatef(160, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(14.0, 0.0, 80.0);
-	// 	glRotatef(160, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(11.0, 0.0, 100.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(15.0, 0.0, 120.0);
-	// 	glRotatef(190, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(12.0, 0.0, 130.0);
-	// 	glRotatef(170, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(11.0, 0.0, 160.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(12.0, 0.0, 165.0);
-	// 	glRotatef(170, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// }
+		glPushMatrix();
+		glTranslatef(11.0, 0.0, -10.0);
+		glRotatef(200, 0, 1, 0);
+		glCallList(tree1_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(15.0, 0.0, 0.0);
+		glRotatef(190, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(12.0, 0.0, 10.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree1_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(14.0, 0.0, 20.0);
+		glRotatef(160, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(14.0, 0.0, 80.0);
+		glRotatef(160, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(11.0, 0.0, 100.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(15.0, 0.0, 120.0);
+		glRotatef(190, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(12.0, 0.0, 130.0);
+		glRotatef(170, 0, 1, 0);
+		glCallList(tree1_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(11.0, 0.0, 155.0);
+		glRotatef(175, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+	}
 
 	for (i = -1; i <= 1; i = i + 2)
 	{

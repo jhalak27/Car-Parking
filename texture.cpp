@@ -33,7 +33,7 @@ void textures()
 {
 
     cloud = loadTextureFromFile("textures/bg2.bmp");
-    cloud1 = loadTextureFromFile("textures/bg.bmp");
+    cloud1 = loadTextureFromFile("textures/bg5.bmp");
     sky = loadTextureFromFile("textures/sky.bmp");
     roadtexture = loadTextureFromFile("textures/road.bmp");
     floortexture = loadTextureFromFile("textures/greengrass.bmp");
