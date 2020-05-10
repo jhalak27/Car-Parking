@@ -4,6 +4,7 @@
 #include <iostream>
 #include "car.cpp"
 #include "house.cpp"
+#include "tree.cpp"
 #include "external_files/RgbImage.cpp"
 #include "external_files/RgbImage.h"
 using namespace std;
@@ -13,8 +14,8 @@ static float x = 0.0f, y = 3.00f, z = 190.0f;
 static float lx = 0.0f, ly = 0.03f, lz = -1.0f;
 float theta = 0.01, fxincr = 0.1, fzincr = 0, temp, theta1, fx = -13, fz = 150;
 static GLint car_display_list, house_display_list, tree_display_list;
-int xxxx = 0, yyyy = 0, housevisible = 1, movecarvar = 0;
-int instruct = 1, movei = 0, showi = 1;
+int xxxx = 0, yyyy = 0, housevisible = 1, movecarvar = 0, treevisible = 1;
+int instruct = 1, movei = 0, showi = 1, initial = 1;
 
 // For colour of cars
 int a[3] = {55, 97, 44};
@@ -60,7 +61,7 @@ GLuint loadTextureFromFile(const char *filename)
 void textures()
 {
 
-	cloud = loadTextureFromFile("textures/bg3.bmp");
+	cloud = loadTextureFromFile("textures/bg2.bmp");
 	roadtexture = loadTextureFromFile("textures/road.bmp");
 	floortexture = loadTextureFromFile("textures/greengrass.bmp");
 }
@@ -188,7 +189,6 @@ void drawRoad()
 	glDisable(GL_TEXTURE_2D);
 }
 
-
 void PrintString(string s, int x, int y, int r, int g, int b)
 {
 	void *font = GLUT_BITMAP_9_BY_15;
@@ -231,12 +231,22 @@ GLuint createDL2() //******************
 	return (houseDL);
 }
 
+GLuint createDL3() //******************
+{
+	GLuint treeDL;
+	treeDL = glGenLists(1);		   // Create the id for the list
+	glNewList(treeDL, GL_COMPILE); // start list
+	makeTree(4, 0.5);			   // call the function that contains the rendering commands
+	glEndList();				   // endList
+	return (treeDL);
+}
 
 void initScene()
 {
 	glEnable(GL_DEPTH_TEST);
 	car_display_list = createDL();
 	house_display_list = createDL2();
+	tree_display_list = createDL3();
 }
 
 void renderStrings()
@@ -277,7 +287,6 @@ void renderScene(void)
 	glPushMatrix();
 	glColor4f(0.2, 0.35, 0.5, 1.0);
 	drawFloor();
-	// glColor4f(1.0, 1.0, 1.0, 1.0);
 	drawClouds();
 	glPopMatrix();
 	glPushMatrix();
@@ -298,7 +307,19 @@ void renderScene(void)
 
 		glPopMatrix();
 	}
-
+	if (treevisible)
+	{
+		glPushMatrix();
+		glTranslatef(-10.0, 0.0, 80.0);
+		glRotatef(200, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-11.0, 0.0, 100.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+	}
 
 	for (i = -1; i <= 1; i = i + 2)
 	{
