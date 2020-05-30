@@ -13,7 +13,6 @@ static float x = 0.0f, y = 3.00f, z = 180.0f;
 static float lx = 0.0f, ly = 0.03f, lz = -1.0f;
 float theta = 0.01, fxincr = 0.1, fzincr = 0, temp, theta1, fx = -10, fz = 100;
 static GLint car_display_list, house_display_list, tree_display_list, tree_night_display_list, tree_day_display_list, house_night_display_list;
-
 /*	housevisible -> to make house visible
 	movecarvar-> to enable or disable car movement
  	treevisible-> to make tree visible */
