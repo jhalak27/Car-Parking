@@ -6,7 +6,7 @@
 #include "external_files/RgbImage.h"
 using namespace std;
 
-GLuint floortexture, roadtexture, cloud, cloud1, sky, nightcloud, nightcloud1, nightsky;
+GLuint floortexture, nightroad, roadtexture, cloud, cloud1, sky, nightcloud, nightcloud1, nightsky;
 
 //Loading and returning texture for the filname
 GLuint loadTextureFromFile(const char *filename)
@@ -32,9 +32,10 @@ GLuint loadTextureFromFile(const char *filename)
 void textures()
 {
     //change the night photos from here
-    nightcloud = loadTextureFromFile("textures/bg2.bmp");
-    nightcloud1 = loadTextureFromFile("textures/bg5.bmp");
-    nightsky = loadTextureFromFile("textures/sky.bmp");
+    nightcloud = loadTextureFromFile("textures/bgnight.bmp");
+    nightcloud1 = loadTextureFromFile("textures/bgnight2.bmp");
+    nightsky = loadTextureFromFile("textures/skynight.bmp");
+    nightroad = loadTextureFromFile("textures/roadnight.bmp");
     //dont disturb anything down here
     cloud = loadTextureFromFile("textures/bg2.bmp");
     cloud1 = loadTextureFromFile("textures/bg5.bmp");
@@ -271,6 +272,25 @@ void drawRoad()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, roadtexture);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(rVert[0]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(rVert[1]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(rVert[2]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(rVert[3]);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+void drawNightRoad()
+{
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, nightroad);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);

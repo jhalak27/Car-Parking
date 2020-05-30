@@ -4,7 +4,7 @@
 #include <iostream>
 #include "car.cpp"
 #include "house.cpp"
-// #include "tree.cpp"
+#include "tree.cpp"
 #include "texture.cpp"
 using namespace std;
 
@@ -12,14 +12,17 @@ static float angle = 0.0, ratio;
 static float x = 0.0f, y = 3.00f, z = 180.0f;
 static float lx = 0.0f, ly = 0.03f, lz = -1.0f;
 float theta = 0.01, fxincr = 0.1, fzincr = 0, temp, theta1, fx = -10, fz = 100;
-static GLint car_display_list, house_display_list, tree_display_list, tree1_display_list, house_night_display_list;
+static GLint car_display_list, house_display_list, tree_display_list, tree_night_display_list, tree_day_display_list, house_night_display_list;
 int xxxx = 0, yyyy = 0, housevisible = 1, movecarvar = 0, treevisible = 1;
 int instruct = 1, movei = 0, showi = 1, night = 0;
 
 // For colour of cars
 int a[3] = {55, 97, 44};
+int a_night[3] = { 15, 30, 13 };
 int b[3] = {102, 194, 127};
+int b_night[3] = { 35, 65, 45 };
 int c[3] = {159, 243, 133};
+int c_night[3] = { 52, 75, 46 };
 
 void changeSize(int w, int h)
 {
@@ -86,25 +89,25 @@ GLuint createnightDL2() //******************
 	return (houseDL);
 }
 
-// GLuint createDL3() //******************
-// {
-// 	GLuint treeDL;
-// 	treeDL = glGenLists(1);		   // Create the id for the list
-// 	glNewList(treeDL, GL_COMPILE); // start list
-// 	makeTree(4, 0.5);			   // call the function that contains the rendering commands
-// 	glEndList();				   // endList
-// 	return (treeDL);
-// }
+GLuint createDL3() //******************
+{
+	GLuint treeDL;
+	treeDL = glGenLists(1);		   // Create the id for the list
+	glNewList(treeDL, GL_COMPILE); // start list
+	makeTree(4, 0.5);			   // call the function that contains the rendering commands
+	glEndList();				   // endList
+	return (treeDL);
+}
 
-// GLuint createDL4() //******************
-// {
-// 	GLuint treeDL;
-// 	treeDL = glGenLists(1);		   // Create the id for the list
-// 	glNewList(treeDL, GL_COMPILE); // start list
-// 	makeTree1(4, 0.5);			   // call the function that contains the rendering commands
-// 	glEndList();				   // endList
-// 	return (treeDL);
-// }
+GLuint createDL4() //******************
+{
+	GLuint treeDL;
+	treeDL = glGenLists(1);		   // Create the id for the list
+	glNewList(treeDL, GL_COMPILE); // start list
+	makeTree1(4, 0.5);			   // call the function that contains the rendering commands
+	glEndList();				   // endList
+	return (treeDL);
+}
 
 void initScene()
 {
@@ -112,8 +115,13 @@ void initScene()
 	car_display_list = createDL();
 	house_display_list = createDL2();
 	house_night_display_list = createnightDL2();
-	// tree_display_list = createDL3();
-	// tree1_display_list = createDL4();
+	tree_day_display_list = createDL3();
+	tree_night_display_list = createDL4();
+}
+
+void treeMode() {
+	if(night) tree_display_list = tree_night_display_list;
+	else tree_display_list = tree_day_display_list;
 }
 
 void renderStrings()
@@ -130,10 +138,10 @@ void renderStrings()
 	PrintString("Students:\nAshwini Jha\nJhalak Gupta", 10, 640, 1.0, 0.0, 1.0);
 
 	if (instruct == 1 && showi == 1)
-		PrintString("Instructions \nm - to move car \nUp key - to move camera forward\nDown key - to move camera backward\nLeft key - to rotate camera to the left\nRight key - to rotate camera to the right\nt - top view\na - to move left\nd - to move right\nw - to zoom in\ns - to zoom out\ni - to show or hide instructions\nq - quit", 750, 660, 0.53, 0.16, 0.32);
+		PrintString("Instructions \nm - to move car \nUp key - to move camera forward\nDown key - to move camera backward\nLeft key - to rotate camera to the left\nRight key - to rotate camera to the right\nt - top view\na - to move left\nd - to move right\nw - to zoom in\ns - to zoom out\nn - toggle day/night mode\ni - to show or hide instructions\nq - quit", 750, 660, 1.0, 1.0, 0.1);
 
 	if (movei == 1 && showi == 1)
-		PrintString("If you wish to move the car, \nUp key - to move car forwards\nDown key - to move car backwards\nLeft key - to rotate car to the left\nRight key - to rotate car to the right \nm - to stop car movement\ni - to show or hide instructions", 750, 660, 1.0, 0.5, 0.5);
+		PrintString("If you wish to move the car, \nUp key - to move car forwards\nDown key - to move car backwards\nLeft key - to rotate car to the left\nRight key - to rotate car to the right \nm - to stop car movement\nn - toggle day/night mode\ni - to show or hide instructions", 750, 660, 1.0, 0.5, 0.5);
 	if (showi == 0)
 		PrintString("Press 'i' to show instructions", 750, 690, 1.0, 1.0, 0.5);
 	glMatrixMode(GL_PROJECTION);
@@ -157,7 +165,7 @@ void renderScene(void)
 	}
 	else
 	{
-		glColor4f(0.3, 0.3, 0.3, 1.0);
+		glColor4f(0.8, 0.8, 0.8, 1.0);
 		drawNightClouds();
 		drawNightClouds1();
 		drawNightSky();
@@ -181,7 +189,8 @@ void renderScene(void)
 	{
 		glColor4f(0.15, 0.15, 0.15, 1.0);
 	}
-	drawRoad();
+	if (night == 0) drawRoad();
+	else drawNightRoad();
 	glPopMatrix();
 	renderStrings();
 	if (housevisible)
@@ -196,90 +205,91 @@ void renderScene(void)
 			glCallList(house_night_display_list);
 		glPopMatrix();
 	}
-	// if (treevisible)
-	// {
-	// 	glPushMatrix();
-	// 	glTranslatef(-10.0, 0.0, 80.0);
-	// 	glRotatef(170, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-11.0, 0.0, 100.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-14.0, 0.0, 90.0);
-	// 	glRotatef(190, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-12.0, 0.0, -50.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-14.0, 0.0, -60.0);
-	// 	glRotatef(195, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-12.0, 0.0, -20.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(-14.0, 0.0, -10.0);
-	// 	glRotatef(175, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
+	if (treevisible)
+	{
+		treeMode();
+		glPushMatrix();
+		glTranslatef(-10.0, 0.0, 80.0);
+		glRotatef(170, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-11.0, 0.0, 100.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-14.0, 0.0, 90.0);
+		glRotatef(190, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-12.0, 0.0, -50.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-14.0, 0.0, -60.0);
+		glRotatef(195, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-12.0, 0.0, -20.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(-14.0, 0.0, -10.0);
+		glRotatef(175, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
 
-	// 	glPushMatrix();
-	// 	glTranslatef(11.0, 0.0, -10.0);
-	// 	glRotatef(200, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(15.0, 0.0, 0.0);
-	// 	glRotatef(190, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(12.0, 0.0, 10.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(14.0, 0.0, 20.0);
-	// 	glRotatef(160, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(14.0, 0.0, 80.0);
-	// 	glRotatef(160, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(11.0, 0.0, 100.0);
-	// 	glRotatef(180, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(15.0, 0.0, 120.0);
-	// 	glRotatef(190, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(12.0, 0.0, 130.0);
-	// 	glRotatef(170, 0, 1, 0);
-	// 	glCallList(tree1_display_list);
-	// 	glPopMatrix();
-	// 	glPushMatrix();
-	// 	glTranslatef(11.0, 0.0, 155.0);
-	// 	glRotatef(175, 0, 1, 0);
-	// 	glCallList(tree_display_list);
-	// 	glPopMatrix();
-	// }
+		glPushMatrix();
+		glTranslatef(11.0, 0.0, -10.0);
+		glRotatef(200, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(15.0, 0.0, 0.0);
+		glRotatef(190, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(12.0, 0.0, 10.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(14.0, 0.0, 20.0);
+		glRotatef(160, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(14.0, 0.0, 80.0);
+		glRotatef(160, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(11.0, 0.0, 100.0);
+		glRotatef(180, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(15.0, 0.0, 120.0);
+		glRotatef(190, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(12.0, 0.0, 130.0);
+		glRotatef(170, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+		glPushMatrix();
+		glTranslatef(11.0, 0.0, 155.0);
+		glRotatef(175, 0, 1, 0);
+		glCallList(tree_display_list);
+		glPopMatrix();
+	}
 
 	for (i = -1; i <= 1; i = i + 2)
 	{
@@ -299,7 +309,7 @@ void renderScene(void)
 			if (night == 0)
 				glColor3ub(a[i + 1], b[j + 1], c[i + 1]);
 			else
-				glColor3ub(a[i + 1], b[j + 1], c[i + 1]); // change colour of cars fron here
+				glColor3ub(a_night[i + 1], b_night[j + 1], c_night[i + 1]); // change colour of cars fron here
 			glCallList(car_display_list);
 			glPopMatrix();
 		}
@@ -340,7 +350,9 @@ void renderScene(void)
 	glScalef(1.5, 1.5, 1.5);
 	glTranslatef(fx, 0, fz);
 	glRotatef(theta1, 0, 1, 0);
-	glColor3f(0.8, 0.7, 0.1);
+	if(night==0) glColor3f(0.8, 0.7, 0.1); //yellow color car
+	else glColor3f(0.4,0.35,0.05);
+	
 	glCallList(car_display_list);
 	glPopMatrix();
 	glutSwapBuffers();
