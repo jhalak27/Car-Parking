@@ -2,9 +2,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>
-#include "car.cpp"
-#include "house.cpp"
-#include "tree.cpp"
+#include "components/car.cpp"
+#include "components/house.cpp"
+#include "components/tree.cpp"
 #include "texture.cpp"
 using namespace std;
 
@@ -13,16 +13,22 @@ static float x = 0.0f, y = 3.00f, z = 180.0f;
 static float lx = 0.0f, ly = 0.03f, lz = -1.0f;
 float theta = 0.01, fxincr = 0.1, fzincr = 0, temp, theta1, fx = -10, fz = 100;
 static GLint car_display_list, house_display_list, tree_display_list, tree_night_display_list, tree_day_display_list, house_night_display_list;
+/*	housevisible -> to make house visible
+	movecarvar-> to enable or disable car movement
+ 	treevisible-> to make tree visible */
 int xxxx = 0, yyyy = 0, housevisible = 1, movecarvar = 0, treevisible = 1;
+
+/* 	instruct, movei, showi -> for different instruction views
+	night -> for enable or disable night view */
 int instruct = 1, movei = 0, showi = 1, night = 0;
 
 // For colour of cars
 int a[3] = {55, 97, 44};
-int a_night[3] = { 15, 30, 13 };
+int a_night[3] = {15, 30, 13};
 int b[3] = {102, 194, 127};
-int b_night[3] = { 35, 65, 45 };
+int b_night[3] = {35, 65, 45};
 int c[3] = {159, 243, 133};
-int c_night[3] = { 52, 75, 46 };
+int c_night[3] = {52, 75, 46};
 
 void changeSize(int w, int h)
 {
@@ -38,6 +44,7 @@ void changeSize(int w, int h)
 	gluLookAt(x, y, z, x + lx, y + ly, z + lz, 0.0f, 1.0f, 0.0f);
 }
 
+//Function to show text on screen
 void PrintString(string s, int x, int y, int r, int g, int b)
 {
 	int next_line = 0;
@@ -59,6 +66,7 @@ void PrintString(string s, int x, int y, int r, int g, int b)
 	}
 }
 
+//Function create car
 GLuint createDL()
 {
 	GLuint carDL;
@@ -69,7 +77,8 @@ GLuint createDL()
 	return (carDL);
 }
 
-GLuint createDL2() //******************
+//Function create house
+GLuint createDL2()
 {
 	GLuint houseDL;
 	houseDL = glGenLists(1);		// Create the id for the list
@@ -89,7 +98,8 @@ GLuint createnightDL2() //******************
 	return (houseDL);
 }
 
-GLuint createDL3() //******************
+//Function create tree of type 1
+GLuint createDL3()
 {
 	GLuint treeDL;
 	treeDL = glGenLists(1);		   // Create the id for the list
@@ -99,7 +109,8 @@ GLuint createDL3() //******************
 	return (treeDL);
 }
 
-GLuint createDL4() //******************
+//Function create tree of type 2
+GLuint createDL4()
 {
 	GLuint treeDL;
 	treeDL = glGenLists(1);		   // Create the id for the list
@@ -119,11 +130,16 @@ void initScene()
 	tree_night_display_list = createDL4();
 }
 
-void treeMode() {
-	if(night) tree_display_list = tree_night_display_list;
-	else tree_display_list = tree_day_display_list;
+//for different mode of tree
+void treeMode()
+{
+	if (night)
+		tree_display_list = tree_night_display_list;
+	else
+		tree_display_list = tree_day_display_list;
 }
 
+//Function to render text on screen
 void renderStrings()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -150,6 +166,7 @@ void renderStrings()
 	glPopMatrix();
 }
 
+//Function to render all the components of the scene
 void renderScene(void)
 {
 	int i, j;
@@ -189,10 +206,14 @@ void renderScene(void)
 	{
 		glColor4f(0.15, 0.15, 0.15, 1.0);
 	}
-	if (night == 0) drawRoad();
-	else drawNightRoad();
+	if (night == 0)
+		drawRoad();
+	else
+		drawNightRoad();
 	glPopMatrix();
 	renderStrings();
+
+	//for house
 	if (housevisible)
 	{
 		glPushMatrix();
@@ -205,6 +226,8 @@ void renderScene(void)
 			glCallList(house_night_display_list);
 		glPopMatrix();
 	}
+
+	//for trees
 	if (treevisible)
 	{
 		treeMode();
@@ -291,6 +314,7 @@ void renderScene(void)
 		glPopMatrix();
 	}
 
+	//for cars
 	for (i = -1; i <= 1; i = i + 2)
 	{
 		for (j = -1; j <= 1; j++)
@@ -350,9 +374,11 @@ void renderScene(void)
 	glScalef(1.5, 1.5, 1.5);
 	glTranslatef(fx, 0, fz);
 	glRotatef(theta1, 0, 1, 0);
-	if(night==0) glColor3f(0.8, 0.7, 0.1); //yellow color car
-	else glColor3f(0.4,0.35,0.05);
-	
+	if (night == 0)
+		glColor3f(0.8, 0.7, 0.1); //yellow color car
+	else
+		glColor3f(0.4, 0.35, 0.05);
+
 	glCallList(car_display_list);
 	glPopMatrix();
 	glutSwapBuffers();
@@ -365,6 +391,7 @@ void orientMe(float ang)
 	glLoadIdentity();
 	gluLookAt(x, y, z, x + lx, y + ly, z + lz, 0.0f, 1.0f, 0.0f);
 }
+
 void moveMeFlat(int i)
 {
 	if (xxxx == 1)
@@ -383,6 +410,7 @@ void moveMeFlat(int i)
 	gluLookAt(x, y, z, x + lx, y + ly, z + lz, 0.0f, 1.0f, 0.0f);
 }
 
+//For camera movement
 void inputKey(int key, int x, int y)
 {
 	switch (key)
@@ -405,6 +433,8 @@ void inputKey(int key, int x, int y)
 		break;
 	}
 }
+
+//For movement of car
 void moveCar(int key, int x, int y)
 {
 	switch (key)
@@ -435,6 +465,7 @@ void moveCar(int key, int x, int y)
 	glutPostRedisplay();
 }
 
+//For other keys functions
 void processNormalKeys(unsigned char key, int x, int y)
 {
 	if (key == 'n')
