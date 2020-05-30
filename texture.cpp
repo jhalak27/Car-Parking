@@ -6,7 +6,7 @@
 #include "external_files/RgbImage.h"
 using namespace std;
 
-GLuint floortexture, roadtexture, cloud, cloud1, sky;
+GLuint floortexture, nightroad, roadtexture, cloud, cloud1, sky, nightcloud, nightcloud1, nightsky;
 
 //Loading and returning texture for the filname
 GLuint loadTextureFromFile(const char *filename)
@@ -31,7 +31,12 @@ GLuint loadTextureFromFile(const char *filename)
 
 void textures()
 {
-
+    //change the night photos from here
+    nightcloud = loadTextureFromFile("textures/bgnight.bmp");
+    nightcloud1 = loadTextureFromFile("textures/bgnight2.bmp");
+    nightsky = loadTextureFromFile("textures/skynight.bmp");
+    nightroad = loadTextureFromFile("textures/roadnight.bmp");
+    //dont disturb anything down here
     cloud = loadTextureFromFile("textures/bg2.bmp");
     cloud1 = loadTextureFromFile("textures/bg5.bmp");
     sky = loadTextureFromFile("textures/sky.bmp");
@@ -50,6 +55,23 @@ void drawSky()
 {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sky);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(sVert[0]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(sVert[1]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(sVert[2]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(sVert[3]);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
+
+void drawNightSky()
+{
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, nightsky);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
     glVertex3fv(sVert[0]);
@@ -116,6 +138,44 @@ void drawClouds()
     glEnd();
     glDisable(GL_TEXTURE_2D);
 }
+void drawNightClouds()
+{
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, nightcloud);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(bVert[0]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(bVert[1]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(bVert[2]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(bVert[3]);
+    glEnd();
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(bVert[4]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(bVert[5]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(bVert[6]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(bVert[7]);
+    glEnd();
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(bVert[8]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(bVert[9]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(bVert[10]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(bVert[11]);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
 
 float bVert1[4][3] = {
     {+200.0, 0.0, +250.0},
@@ -128,6 +188,23 @@ void drawClouds1()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, cloud1);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(bVert1[0]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(bVert1[1]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(bVert1[2]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(bVert1[3]);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
+void drawNightClouds1()
+{
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, nightcloud1);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
     glVertex3fv(bVert1[0]);
@@ -195,6 +272,25 @@ void drawRoad()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, roadtexture);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3fv(rVert[0]);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3fv(rVert[1]);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3fv(rVert[2]);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3fv(rVert[3]);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+void drawNightRoad()
+{
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, nightroad);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
